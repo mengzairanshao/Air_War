@@ -87,19 +87,38 @@ int main()
 	}
 }
 
+/**
+ * [writeAndDelete 删除某像素点后并在新的位置写入相应的像素点]
+ * @param wi   [待写入的点的X坐标]
+ * @param wj   [待写入的点的Y坐标]
+ * @param di   [待删除的点的X坐标]
+ * @param dj   [待删除的点的Y坐标]
+ * @param wstr [待写入的点要写入的内容]
+ * @param dstr [待删除的点要写入的内容]
+ */
 void writeAndDelete(int wi, int wj, int di, int dj, char* wstr, char* dstr)
 {
 	write(di, dj, dstr);
 	write(wi, wj, wstr);
 }
 
+/**
+ * [write 在某个点写入某个内容]
+ * @param wi   [待写入的点的X坐标]
+ * @param wj   [待写入的点的Y坐标]
+ * @param wstr [待写入的内容]
+ */
 void write(int wi, int wj, char* wstr)
 {
 	short wx = wi, wy = wj;
 	COORD position = { wy, wx };
-	WriteConsoleOutputCharacter(consoleHandle, wstr, strlen(wstr), position, NULL);
+	DWORD buf[128];
+	WriteConsoleOutputCharacter(consoleHandle, wstr, strlen(wstr), position, (LPDWORD)buf);
 }
 
+/**
+ * [fixed_write 某些固定不变的内容的写入]
+ */
 void fixed_write()
 {
 	for (int i = 0; i <= length; i++)
@@ -110,6 +129,9 @@ void fixed_write()
 	write(8, width, "Copyright:HZY");
 }
 
+/**
+ * [print 向缓冲区写入内容]
+ */
 void print()
 {
 	char buf[100];
@@ -149,6 +171,9 @@ void print()
 	write(4, width + strlen("DEATH:"), buf);
 }
 
+/**
+ * [movebul 子弹移动函数]
+ */
 void movebul()
 {
 	for (int i = 0; i < length; i++)
@@ -163,6 +188,9 @@ void movebul()
 	}
 }
 
+/**
+ * [movepla 敌机移动函数]
+ */
 void movepla()
 {
 	for (int i = width - 1; i >= 0; i--)//从最后一行往上是为了避免把敌机直接冲出数组。
@@ -175,6 +203,9 @@ void movepla()
 		else if (plane_pos[i] == length)plane_pos[i] = -length;
 }
 
+/**
+ * [setting 设置函数]
+ */
 void setting()
 {
 	int sw;
@@ -220,6 +251,9 @@ void setting()
 	fixed_write();
 }
 
+/**
+ * [menu 菜单]
+ */
 void menu()
 {
 	printf("Introduction :Press J and L to control the left and right ,W shoot bullets\n\n SETTING :Please press Esc\n\n Start :any key\n\n\n\n\n\n\n\n                               by HZY");
@@ -227,6 +261,12 @@ void menu()
 		setting();
 }
 
+/**
+ * [plane 己方飞机构造函数]
+ * @param x   [飞机中心点的X坐标]
+ * @param y   [飞机中心点的Y坐标]
+ * @param vis [控制飞机是否可见]
+ */
 void plane(int x, int y, bool vis)
 {
 	/*第一行*/
@@ -239,6 +279,14 @@ void plane(int x, int y, bool vis)
 	createProject(x - 1, y, "\xFE\xFE\xFE", "\x20\x20\x20", vis);
 }
 
+/**
+ * [createProject 创建部件函数]
+ * @param x    [部件X坐标]
+ * @param y    [部件Y坐标]
+ * @param wstr [部件的待写入支付]
+ * @param dstr [部件的待删除支付]
+ * @param vis  [是否可见]
+ */
 void createProject(int x, int y, char* wstr, char* dstr, bool vis)
 {
 	if (vis)write(y, x, wstr);
